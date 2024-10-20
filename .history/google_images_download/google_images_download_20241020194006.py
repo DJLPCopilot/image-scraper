@@ -119,21 +119,17 @@ def user_input():
 
 class googleimagesdownload:
     def get_page_source(self, url):
-                browser = webdriver.Chrome()
-                browser.get(url)
-                
-                print("Reached end of Page.")
-                time.sleep(0.5)
+        browser = webdriver.Chrome()
+        browser.get(url)
         
-                source = browser.page_source  # page source
-                # close the browser
-                browser.close()
-        
-                return source
-        
-        # Example usage
-        url = "http://example.com"
-        page_source = get_page_source(url)
+        print("Reached end of Page.")
+        time.sleep(0.5)
+
+        source = browser.page_source  # page source
+        # close the browser
+        browser.close()
+
+        return source
 
     # Downloading entire Web Document (Raw Page Content)
     def download_page(self,url):

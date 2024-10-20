@@ -119,21 +119,17 @@ def user_input():
 
 class googleimagesdownload:
     def get_page_source(self, url):
-                browser = webdriver.Chrome()
-                browser.get(url)
-                
-                print("Reached end of Page.")
-                time.sleep(0.5)
+        browser = webdriver.Chrome()
+        browser.get(url)
         
-                source = browser.page_source  # page source
-                # close the browser
-                browser.close()
-        
-                return source
-        
-        # Example usage
-        url = "http://example.com"
-        page_source = get_page_source(url)
+        print("Reached end of Page.")
+        time.sleep(0.5)
+
+        source = browser.page_source  # page source
+        # close the browser
+        browser.close()
+
+        return source
 
     # Downloading entire Web Document (Raw Page Content)
     def download_page(self,url):
@@ -148,7 +144,9 @@ class googleimagesdownload:
             return invalid_escape.sub(self.replace_with_byte, brokenjson)
 
         # Download Page for more than 100 images
-        def download_extended_page(self, url, chromedriver_path):
+        def download_extended_page(self, url, chromedriver_path=None):
+            if not chromedriver_path:
+                raise ValueError("chromedriver_path must be specified")
             if not chromedriver_path:
                 raise ValueError("chromedriver_path must be specified")
             from selenium import webdriver
@@ -157,9 +155,12 @@ class googleimagesdownload:
                 reload(sys)
                 sys.setdefaultencoding('utf8')
             options = webdriver.ChromeOptions()
+            from selenium import webdriver
+            
+            options = webdriver.ChromeOptions()
             options.add_argument('--no-sandbox')
             options.add_argument("--headless")
-        
+
             try:
                 browser = webdriver.Chrome(chromedriver_path, options=options)
             except Exception as e:
@@ -168,18 +169,18 @@ class googleimagesdownload:
                       "installed on your machine (exception: %s)" % e)
                 sys.exit()
             browser.set_window_size(1024, 768)
-        
+    
             # Open the link
             browser.get(url)
             time.sleep(1)
             print("Getting you a lot of images. This may take a few moments...")
-        
+    
             element = browser.find_element_by_tag_name("body")
             # Scroll down
             for i in range(30):
                 element.send_keys(Keys.PAGE_DOWN)
                 time.sleep(0.3)
-        
+    
             try:
                 browser.find_element_by_id("smb").click()
                 for i in range(50):
@@ -189,14 +190,14 @@ class googleimagesdownload:
                 for i in range(10):
                     element.send_keys(Keys.PAGE_DOWN)
                     time.sleep(0.3)  # bot id protection
-        
+    
             print("Reached end of Page.")
             time.sleep(0.5)
-        
+    
             source = browser.page_source #page source
             #close the browser
             browser.close()
-        
+    
             return source
 
         return source

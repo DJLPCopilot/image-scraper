@@ -17,6 +17,8 @@ if cur_version >= version:  # If the Current Version of Python is 3.0 or above
     from http.client import IncompleteRead, BadStatusLine
     http.client._MAXHEADERS = 1000
     import time  # Importing the time library to check the time of code execution
+else:
+    import urllib2
 import os
 import argparse
 import ssl
@@ -25,8 +27,6 @@ import json
 import re
 import codecs
 import socket
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 
 args_list = ["keywords", "keywords_from_file", "prefix_keywords", "suffix_keywords",
              "limit", "format", "color", "color_type", "usage_rights", "size",
@@ -118,179 +118,106 @@ def user_input():
 
 
 class googleimagesdownload:
-    def get_page_source(self, url):
-                browser = webdriver.Chrome()
-                browser.get(url)
-                
-                print("Reached end of Page.")
-                time.sleep(0.5)
-        
-                source = browser.page_source  # page source
-                # close the browser
-                browser.close()
-        
-                return source
-        
-        # Example usage
-        url = "http://example.com"
-        page_source = get_page_source(url)
+    def __init__(self):
+        pass
 
     # Downloading entire Web Document (Raw Page Content)
     def download_page(self,url):
         version = (3, 0)
         cur_version = sys.version_info
-        # Correcting the escape characters for python2
-        def replace_with_byte(self, match):
-            return chr(int(match.group(0)[1:], 8))
-
-        def repair(self, brokenjson):
-            invalid_escape = re.compile(r'\\[0-7]{1,3}')  # up to 3 digits for byte values up to FF
-            return invalid_escape.sub(self.replace_with_byte, brokenjson)
-
-        # Download Page for more than 100 images
-        def download_extended_page(self, url, chromedriver_path):
-            if not chromedriver_path:
-                raise ValueError("chromedriver_path must be specified")
-            from selenium import webdriver
-            from selenium.webdriver.common.keys import Keys
-            if sys.version_info[0] < 3:
-                reload(sys)
-                sys.setdefaultencoding('utf8')
-            options = webdriver.ChromeOptions()
-            options.add_argument('--no-sandbox')
-            options.add_argument("--headless")
-        
+        if cur_version >= version:  # If the Current Version of Python is 3.0 or above
             try:
-                browser = webdriver.Chrome(chromedriver_path, options=options)
+                headers = {}
+                headers['User-Agent'] = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+                req = urllib.request.Request(url, headers=headers)
+                resp = urllib.request.urlopen(req)
+                respData = str(resp.read())
+                return respData
             except Exception as e:
-                print("Looks like we cannot locate the path to 'chromedriver' (use the '--chromedriver' "
-                      "argument to specify the path to the executable.) or google chrome browser is not "
-                      "installed on your machine (exception: %s)" % e)
+                print("Could not open URL. Please check your internet connection and/or ssl settings \n"
+                      "If you are using proxy, make sure your proxy settings is configured correctly")
                 sys.exit()
-            browser.set_window_size(1024, 768)
-        
-            # Open the link
-            browser.get(url)
-            time.sleep(1)
-            print("Getting you a lot of images. This may take a few moments...")
-        
-            element = browser.find_element_by_tag_name("body")
-            # Scroll down
-            for i in range(30):
-                element.send_keys(Keys.PAGE_DOWN)
-                time.sleep(0.3)
-        
+        else:  # If the Current Version of Python is 2.x
             try:
-                browser.find_element_by_id("smb").click()
-                for i in range(50):
-                    element.send_keys(Keys.PAGE_DOWN)
-                    time.sleep(0.3)  # bot id protection
+                headers = {}
+                headers['User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
+                req = urllib2.Request(url, headers=headers)
+                try:
+                    response = urllib2.urlopen(req)
+                except URLError:  # Handling SSL certificate failed
+                    context = ssl._create_unverified_context()
+                    response = urlopen(req, context=context)
+                page = response.read()
+                return page
             except:
-                for i in range(10):
-                    element.send_keys(Keys.PAGE_DOWN)
-                    time.sleep(0.3)  # bot id protection
-        
-            print("Reached end of Page.")
-            time.sleep(0.5)
-        
-            source = browser.page_source #page source
-            #close the browser
-            browser.close()
-        
-            return source
-
-        return source
-
-try:
-    # Correcting the escape characters for python2
-    def replace_with_byte(self, match):
-        return chr(int(match.group(0)[1:], 8))
-
-    def repair(self, brokenjson):
-        invalid_escape = re.compile(r'\\[0-7]{1,3}')  # up to 3 digits for byte values up to FF
-        return invalid_escape.sub(self.replace_with_byte, brokenjson)
-except Exception as e:
-    print(f"An error occurred: {e}")
-try:
-    # Correcting the escape characters for python2
-    def replace_with_byte(self, match):
-        return chr(int(match.group(0)[1:], 8))
-
-    def repair(self, brokenjson):
-        invalid_escape = re.compile(r'\\[0-7]{1,3}')  # up to 3 digits for byte values up to FF
-        return invalid_escape.sub(self.replace_with_byte, brokenjson)
-except Exception as e:
-    print(f"An error occurred: {e}")
-try:
-    # Correcting the escape characters for python2
-    def replace_with_byte(self, match):
-        return chr(int(match.group(0)[1:], 8))
-
-    def repair(self, brokenjson):
-        invalid_escape = re.compile(r'\\[0-7]{1,3}')  # up to 3 digits for byte values up to FF
-        return invalid_escape.sub(self.replace_with_byte, brokenjson)
-except Exception as e:
-    print(f"An error occurred: {e}")
-    from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-if sys.version_info[0] < 3:
-                reload(sys)
-                sys.setdefaultencoding('utf8')
-                options = webdriver.ChromeOptions()
-options.add_argument('--no-sandbox')
-options.add_argument("--headless")
-
-try:
-                browser = webdriver.Chrome(chromedriver_path, options=options)
-except Exception as e:
-                print("Looks like we cannot locate the path to 'chromedriver' (use the '--chromedriver' "
-                      "argument to specify the path to the executable.) or google chrome browser is not "
-                      "installed on your machine (exception: %s)" % e)
+                print("Could not open URL. Please check your internet connection and/or ssl settings \n"
+                      "If you are using proxy, make sure your proxy settings is configured correctly")
                 sys.exit()
-browser.set_window_size(1024, 768)
+                return "Page Not found"
+
+
+    # Download Page for more than 100 images
+    def download_extended_page(self,url,chromedriver):
+        from selenium import webdriver
+        from selenium.webdriver.common.keys import Keys
+        if sys.version_info[0] < 3:
+            reload(sys)
+            sys.setdefaultencoding('utf8')
+        options = webdriver.ChromeOptions()
+        options.add_argument('--no-sandbox')
+        options.add_argument("--headless")
+
+        try:
+            browser = webdriver.Chrome(chromedriver, chrome_options=options)
+        except Exception as e:
+            print("Looks like we cannot locate the path the 'chromedriver' (use the '--chromedriver' "
+                  "argument to specify the path to the executable.) or google chrome browser is not "
+                  "installed on your machine (exception: %s)" % e)
+            sys.exit()
+        browser.set_window_size(1024, 768)
 
         # Open the link
-browser.get(url)
-time.sleep(1)
-print("Getting you a lot of images. This may take a few moments...")
+        browser.get(url)
+        time.sleep(1)
+        print("Getting you a lot of images. This may take a few moments...")
 
-element = browser.find_element_by_tag_name("body")
+        element = browser.find_element_by_tag_name("body")
         # Scroll down
-for i in range(30):
+        for i in range(30):
             element.send_keys(Keys.PAGE_DOWN)
             time.sleep(0.3)
 
-try:
+        try:
             browser.find_element_by_id("smb").click()
             for i in range(50):
                 element.send_keys(Keys.PAGE_DOWN)
                 time.sleep(0.3)  # bot id protection
-except:
+        except:
             for i in range(10):
                 element.send_keys(Keys.PAGE_DOWN)
                 time.sleep(0.3)  # bot id protection
 
-print("Reached end of Page.")
-time.sleep(0.5)
+        print("Reached end of Page.")
+        time.sleep(0.5)
 
-source = browser.page_source #page source
+        source = browser.page_source #page source
         #close the browser
-browser.close()
+        browser.close()
 
-return source
+        return source
 
 
     #Correcting the escape characters for python2
-def replace_with_byte(self,match):
+    def replace_with_byte(self,match):
         return chr(int(match.group(0)[1:], 8))
 
-def repair(self,brokenjson):
+    def repair(self,brokenjson):
         invalid_escape = re.compile(r'\\[0-7]{1,3}')  # up to 3 digits for byte values up to FF
         return invalid_escape.sub(self.replace_with_byte, brokenjson)
 
 
     # Finding 'Next Image' from the given raw page
-def get_next_tab(self,s):
+    def get_next_tab(self,s):
         start_line = s.find('class="dtviD"')
         if start_line == -1:  # If no links are found then give an error!
             end_quote = 0
@@ -320,7 +247,7 @@ def get_next_tab(self,s):
 
 
     # Getting all links with the help of '_images_get_next_image'
-def get_all_tabs(self,page):
+    def get_all_tabs(self,page):
         tabs = {}
         while True:
             item,item_name,end_content = self.get_next_tab(page)
@@ -337,7 +264,7 @@ def get_all_tabs(self,page):
 
 
     #Format the object in readable format
-def format_object(self,object):
+    def format_object(self,object):
         formatted_object = {}
         formatted_object['image_format'] = object['ity']
         formatted_object['image_height'] = object['oh']
@@ -351,7 +278,7 @@ def format_object(self,object):
 
 
     #function to download single image
-def single_image(self,image_url):
+    def single_image(self,image_url):
         main_directory = "downloads"
         extensions = (".jpg", ".gif", ".png", ".bmp", ".svg", ".webp", ".ico")
         url = image_url
@@ -389,7 +316,7 @@ def single_image(self,image_url):
         print("completed ====> " + image_name.encode('raw_unicode_escape').decode('utf-8'))
         return
 
-def similar_images(self,similar_images):
+    def similar_images(self,similar_images):
         version = (3, 0)
         cur_version = sys.version_info
         if cur_version >= version:  # If the Current Version of Python is 3.0 or above
@@ -415,7 +342,7 @@ def similar_images(self,similar_images):
             except:
                 return "Cloud not connect to Google Images endpoint"
         else:  # If the Current Version of Python is 2.x
-try:
+            try:
                 searchUrl = 'https://www.google.com/searchbyimage?site=search&sa=X&image_url=' + similar_images
                 headers = {}
                 headers['User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
@@ -433,9 +360,31 @@ try:
                 l3 = content.find('/search?sa=X&amp;q=')
                 l4 = content.find(';', l3 + 19)
                 urll2 = content[l3 + 19:l4]
+                return(urll2)
+            except:
+                return "Cloud not connect to Google Images endpoint"
+
+    #Building URL parameters
+    def build_url_parameters(self,arguments):
+        if arguments['language']:
+            lang = "&lr="
+            lang_param = {"Arabic":"lang_ar","Chinese (Simplified)":"lang_zh-CN","Chinese (Traditional)":"lang_zh-TW","Czech":"lang_cs","Danish":"lang_da","Dutch":"lang_nl","English":"lang_en","Estonian":"lang_et","Finnish":"lang_fi","French":"lang_fr","German":"lang_de","Greek":"lang_el","Hebrew":"lang_iw ","Hungarian":"lang_hu","Icelandic":"lang_is","Italian":"lang_it","Japanese":"lang_ja","Korean":"lang_ko","Latvian":"lang_lv","Lithuanian":"lang_lt","Norwegian":"lang_no","Portuguese":"lang_pt","Polish":"lang_pl","Romanian":"lang_ro","Russian":"lang_ru","Spanish":"lang_es","Swedish":"lang_sv","Turkish":"lang_tr"}
+            lang_url = lang+lang_param[arguments['language']]
+        else:
+            lang_url = ''
+
+        if arguments['time_range']:
+            json_acceptable_string = arguments['time_range'].replace("'", "\"")
+            d = json.loads(json_acceptable_string)
+            time_range = ',cdr:1,cd_min:' + d['time_min'] + ',cd_max:' + d['time_max']
+        else:
+            time_range = ''
+
+        if arguments['exact_size']:
+            size_array = [x.strip() for x in arguments['exact_size'].split(',')]
             exact_size = ",isz:ex,iszw:" + str(size_array[0]) + ",iszh:" + str(size_array[1])
         else:
-exact_size = ''
+            exact_size = ''
 
         built_url = "&tbs="
         counter = 0
